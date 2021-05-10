@@ -44,12 +44,6 @@ def solve(solutionGrid, killerGrid):
 
 # Functie om met Constraint Satisfaction te valideren of zet valide is (Boolean)
 def checkValidity(board, numberFilledIn, position, killerGrid):
-    # board[0] = horizontale waarde (row)
-    # board[1] = verticale waarde (col)
-    print("Number filled in: ")
-    print(numberFilledIn)
-    print("Position: ")
-    print(position)
 
     # Constraint op rij (horizontaal)
     # Voor elke horizontale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
@@ -72,27 +66,54 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             if board[i][j] == numberFilledIn and (i, j) != position:
                 return False
 
-    # Constraint op Killer squares
+    # Killer-constraint
     print("Cage value:")
     print(killerGrid[position[0]][position[1]])
-    print("len(board[0]):")
-    print(len(board[0]))
     cageValue = killerGrid[position[0]][position[1]]
     killerCage = []
 
     # List aanvullen met alle aanliggende coordinaten die bij de killer cage horen
     # Eerst horizontaal checken, bij elke horizontale match ook verticaal checken
     # Voor iedere horizontale waarde: ( -> 1-9)
-    for i in range(len(board[0])):
-        if killerGrid[position[0]][i] == cageValue and position[1] != i:
-            killerCage.append((0, i))
-            print("Found horizontal cage match:")
-            print((0, i))
-            for v in range(len(board[i])):
-                if killerGrid[v][position[1]] == cageValue and position[0] != i:
-                    killerCage.append((v, [position[1]]))
-                    print("Found vertical cage match:")
-                    print((v, position[1]))
+
+    # print("Board used for Killer-constraint:")
+    # print(board)
+    # print("First row of board:")
+    # print(board[0])
+    # print("First value of first row of board:")
+    # print(board[0][0])
+
+    print("Amount of rows in board:")
+    print(len(board))
+    # board [
+    #   [0,..],
+    #   [0,..],
+    #   [0,..],
+    #    ...
+    #   ]
+
+    # Itereren over waardes hierin kan via range(...) methode
+
+    print("Amount of cells in single row:")
+    print(len(board[0]))
+    # board [
+    #   [0,1,2,3,4,5,6,7,8],  <--   horizontale sudoku regel
+    #   ]
+
+    # for x in killerGrid: # elke rij
+    #     for y in x: # elke waarde per rij
+    #         print(y)
+
+    for r in range(len(board)):
+        for v in range(len(board[r])):
+            print("r = " + str(r))
+            print("v = " + str(v))
+            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][position[v]]))
+            if killerGrid[r][position[v]] == cageValue:
+                # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
+                matchedCoords = [r, v]
+                print("Cell found matching cage value: " + str(matchedCoords))
+                killerCage.append(matchedCoords)
 
     # Als cage nog niet compleet is ingevuld, skip
     emptySpaceInCage = 0
@@ -139,6 +160,6 @@ def findEmpty(solutionGrid):
 print("Start:")
 printSolutionGrid(solutionGrid)
 solve(solutionGrid, killerSudokuGrid)
-print(" ")
+print("")
 print("Oplossing:")
 printSolutionGrid(solutionGrid)
