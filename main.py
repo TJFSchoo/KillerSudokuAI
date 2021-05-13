@@ -108,8 +108,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
         for v in range(len(board[r])):
             print("r = " + str(r))
             print("v = " + str(v))
-            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][position[v]]))
-            if killerGrid[r][position[v]] == cageValue:
+            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
+            if killerGrid[r][v] == cageValue:
                 # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
                 matchedCoords = [r, v]
                 print("Cell found matching cage value: " + str(matchedCoords))
