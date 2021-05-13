@@ -103,17 +103,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     # for x in killerGrid: # elke rij
     #     for y in x: # elke waarde per rij
     #         print(y)
-
-    for r in range(len(board)):
-        for v in range(len(board[r])):
-            print("r = " + str(r))
-            print("v = " + str(v))
-            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
-            if killerGrid[r][v] == cageValue:
-                # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
-                matchedCoords = [r, v]
-                print("Cell found matching cage value: " + str(matchedCoords))
-                killerCage.append(matchedCoords)
+    killerCage = findKillerCageFriends(board, killerGrid, cageValue, position)
 
     # Als cage nog niet compleet is ingevuld, skip
     emptySpaceInCage = 0
@@ -131,6 +121,22 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             return False
 
     return True
+
+def findKillerCageFriends(board, killerGrid, cageValue, position):
+    killerCage = []
+    for r in range(len(board)):
+        for v in range(len(board[r])):
+            print("r = " + str(r))
+            print("v = " + str(v))
+            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
+            if killerGrid[r][v] == cageValue:
+                # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
+                if (r >= position[0]-1) and (r <= position[0]+1) and (v >= position[1]-1) and (v <= position[1]+1) and ((r, v) != position):
+                    matchedCoords = [r, v]
+                    print("Cell found matching cage value: " + str(matchedCoords))
+                    killerCage.append(matchedCoords)
+                    # Recursie om verder/dieper te zoeken naar killer cage matches
+                    findKillerCageFriends(board, killerGrid, cageValue, matchedCoords)
 
 def printSolutionGrid(solutionGrid):
     for i in range(len(solutionGrid)):
