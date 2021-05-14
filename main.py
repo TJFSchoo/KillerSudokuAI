@@ -103,7 +103,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     # for x in killerGrid: # elke rij
     #     for y in x: # elke waarde per rij
     #         print(y)
-    killerCage = findKillerCageFriends(board, killerGrid, cageValue, position)
+    killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)])
 
     # Als cage nog niet compleet is ingevuld, skip
     emptySpaceInCage = 0
@@ -122,21 +122,39 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 
     return True
 
-def findKillerCageFriends(board, killerGrid, cageValue, position):
+def findKillerCageFriends(board, killerGrid, cageValue, currentPosition, positionsToIgnore):
     killerCage = []
     for r in range(len(board)):
         for v in range(len(board[r])):
-            print("r = " + str(r))
-            print("v = " + str(v))
-            print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
+            # # Huidige coordinaten
+            # print("r = " + str(r))
+            # print("v = " + str(v))
+            # print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
             if killerGrid[r][v] == cageValue:
                 # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
-                if (r >= position[0]-1) and (r <= position[0]+1) and (v >= position[1]-1) and (v <= position[1]+1) and ((r, v) != position):
-                    matchedCoords = [r, v]
-                    print("Cell found matching cage value: " + str(matchedCoords))
-                    killerCage.append(matchedCoords)
-                    # Recursie om verder/dieper te zoeken naar killer cage matches
-                    findKillerCageFriends(board, killerGrid, cageValue, matchedCoords)
+                if (r >= currentPosition[0] - 1) and (r <= currentPosition[0] + 1) and (v >= currentPosition[1] - 1) and (v <= currentPosition[1] + 1) and ((r, v) != currentPosition):
+
+                    # Zoek naar duplicate coordinaten in killer cage buffer
+                    duplicateFound = 0
+                    for a in positionsToIgnore:
+                        if a == currentPosition:
+                            duplicateFound = 1
+
+                    # Indien uniek, opslaan
+                    if duplicateFound == 0:
+                        matchedPosition = currentPosition
+                        print("Cell found matching cage value: " + str(matchedPosition))
+                        killerCage.append(matchedPosition)
+
+                        # Recursie om verder/dieper te zoeken naar killer cage matches
+                        updatedPositionsToIgnore = positionsToIgnore
+                        updatedPositionsToIgnore.append(currentPosition)
+                        killerCageBuffer = findKillerCageFriends(board, killerGrid, cageValue, matchedPosition, updatedPositionsToIgnore)
+
+                        # Opslaan van resultaten van recursie bij terugkeer
+                        for a in killerCageBuffer:
+                            killerCage.append(a)
+    return killerCage
 
 def printSolutionGrid(solutionGrid):
     for i in range(len(solutionGrid)):
