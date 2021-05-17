@@ -1,3 +1,5 @@
+import time
+
 solutionGrid = [
     [0,  0,  0,  0,  0,  0,  0,  0,  0],
     [0,  0,  0,  0,  0,  0,  0,  0,  0],
@@ -31,11 +33,11 @@ def solve(solutionGrid, killerGrid):
     else:
         row, col = foundEmptySquare
 
-    for i in range(1,10):
+    for i in range(1, 10):
         if checkValidity(solutionGrid, i, (row, col), killerGrid):
             solutionGrid[row][col] = i
 
-            if solve(solutionGrid):
+            if solve(solutionGrid, killerGrid):
                 return True
 
             solutionGrid[row][col] = 0
@@ -44,17 +46,22 @@ def solve(solutionGrid, killerGrid):
 
 # Functie om met Constraint Satisfaction te valideren of zet valide is (Boolean)
 def checkValidity(board, numberFilledIn, position, killerGrid):
+    print("Currently filled in board: " + str(solutionGrid))
+    print("Trying to fill in number: " + str(numberFilledIn))
+    time.sleep(1)
 
     # Constraint op rij (horizontaal)
     # Voor elke horizontale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
     for i in range(len(board[0])):
         if board[position[0]][i] == numberFilledIn and position[1] != i:
+            print("Horizontal constraint: FALSE")
             return False
 
     # Constraint op kolom (verticaal)
     # Voor elke verticale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
     for i in range(len(board)):
         if board[i][position[1]] == numberFilledIn and position[0] != i:
+            print("Vertical constraint: FALSE")
             return False
 
     # Constraint op vierkant (9x9)
@@ -64,6 +71,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     for i in range(box_y * 3, box_y * 3 + 3):
         for j in range(box_x * 3, box_x * 3 + 3):
             if board[i][j] == numberFilledIn and (i, j) != position:
+                print("Square constraint: FALSE")
                 return False
 
     # Killer-constraint
@@ -83,8 +91,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     # print("First value of first row of board:")
     # print(board[0][0])
 
-    print("Amount of rows in board:")
-    print(len(board))
+    # print("Amount of rows in board:")
+    # print(len(board))
     # board [
     #   [0,..],
     #   [0,..],
@@ -94,8 +102,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 
     # Itereren over waardes hierin kan via range(...) methode
 
-    print("Amount of cells in single row:")
-    print(len(board[0]))
+    # print("Amount of cells in single row:")
+    # print(len(board[0]))
     # board [
     #   [0,1,2,3,4,5,6,7,8],  <--   horizontale sudoku regel
     #   ]
@@ -103,57 +111,232 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     # for x in killerGrid: # elke rij
     #     for y in x: # elke waarde per rij
     #         print(y)
-    killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)])
+
+    killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)], "none")
+    # killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)])
+    print("Matching killer cage for value " + str(cageValue) + ", position " + str(position) + ":")
+    print(str(killerCage))
 
     # Als cage nog niet compleet is ingevuld, skip
     emptySpaceInCage = 0
-    for i in range(killerCage):
-        if board[position[i]] == 0:
-            emptySpaceInCage = 1
+    count = 0
+    emptyCageSpaceInTheMiddle = 0
+    finalEmptyCageSpace = 0
+    killerCage.sort()
+    for i in killerCage:
+        count = count + 1
+        verticalCoords = i[0]
+        horizontalCoords = i[1]
 
-    if emptySpaceInCage == 0:
-        cageCount = 0
+        if board[verticalCoords][horizontalCoords] == 0 and count != len(killerCage):
+            emptyCageSpaceInTheMiddle = 1
+
+        # If all other cage values are filled in, and last value is not yet filled in, return true and proceed with check
+        if board[verticalCoords][horizontalCoords] == 0 and count == len(killerCage) and emptyCageSpaceInTheMiddle == 0:
+            finalEmptyCageSpace = 1
+
+    if finalEmptyCageSpace == 1:
+        print("Final blank space found in cage, killer-constraint activated:")
+        cageTotalValue = 0
         # Optellen alle waardes en vergelijken met totale waarde die cage moet zijn bij oplossing
-        for i in range(killerCage):
-            cageCount = cageCount + board[position[i]]
+        for i in killerCage:
+            verticalCoords = i[0]
+            horizontalCoords = i[1]
+            cageTotalValue = cageTotalValue + board[verticalCoords][horizontalCoords]
+        cageTotalValue = cageTotalValue + numberFilledIn
+        print("Assigned cage value: " + str(cageValue))
+        print("Total filled-in cage value: " + str(cageTotalValue))
         # Als alle cage waardes zijn ingevuld en de totale cage waarde wijkt af: False
-        if cageValue != cageCount:
+        if cageValue != cageTotalValue:
+            print("Killer constraint: FALSE")
             return False
+        else:
+            print("Cage value correct!")
+            return True
+
+    else:
+        print("Skipping killer-constraint for now due to blank spaces.")
 
     return True
 
-def findKillerCageFriends(board, killerGrid, cageValue, currentPosition, positionsToIgnore):
+# def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore):
+#     killerCage = []
+#     for r in range(len(board)):
+#         for v in range(len(board[r])):
+#             if killerGrid[r][v] == cageValue:
+#                 if (r >= targetPosition[0] - 3) and (r <= targetPosition[0] + 3) and (v >= targetPosition[1] - 3) and (v <= targetPosition[1] + 3):
+#
+#                     # Zoek naar duplicate coordinaten in killer cage buffer
+#                     duplicateFound = 0
+#                     for a in positionsToIgnore:
+#                         if a == (r, v):
+#                             duplicateFound = 1
+#
+#                     # Indien uniek, opslaan
+#                     if duplicateFound == 0:
+#                         killerCage.append([r, v])
+#
+#                     positionsToIgnore.append([r, v])
+#     return killerCage
+
+def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
     killerCage = []
-    for r in range(len(board)):
-        for v in range(len(board[r])):
-            # # Huidige coordinaten
-            # print("r = " + str(r))
-            # print("v = " + str(v))
-            # print("Comparing killer-cage value " + str(cageValue) + " to cell value " + str(killerGrid[r][v]))
-            if killerGrid[r][v] == cageValue:
-                # ToDo: Alleen match als de cel aangrenzend is aan de cel van de cageValue
-                if (r >= currentPosition[0] - 1) and (r <= currentPosition[0] + 1) and (v >= currentPosition[1] - 1) and (v <= currentPosition[1] + 1) and ((r, v) != currentPosition):
 
-                    # Zoek naar duplicate coordinaten in killer cage buffer
-                    duplicateFound = 0
-                    for a in positionsToIgnore:
-                        if a == currentPosition:
-                            duplicateFound = 1
+    upSearch = 1
+    rightSearch = 1
+    downSearch = 1
+    leftSearch = 1
 
-                    # Indien uniek, opslaan
-                    if duplicateFound == 0:
-                        matchedPosition = currentPosition
-                        print("Cell found matching cage value: " + str(matchedPosition))
-                        killerCage.append(matchedPosition)
+    leftCount = 0
+    rightCount = 0
+    upCount = 0
+    downCount = 0
 
-                        # Recursie om verder/dieper te zoeken naar killer cage matches
-                        updatedPositionsToIgnore = positionsToIgnore
-                        updatedPositionsToIgnore.append(currentPosition)
-                        killerCageBuffer = findKillerCageFriends(board, killerGrid, cageValue, matchedPosition, updatedPositionsToIgnore)
+    # Left Search
+    while(leftSearch == 1 and origin != "right"):
+        #time.sleep(1)
+        #print("LEFT search called, from origin: " + origin + ", cage value to find: " + str(cageValue) + ", origin position: " + str(targetPosition))
+        #print("-- Target position: " + str(targetPosition[0]) + ", " + str((targetPosition[1] - leftCount)) + ", found cage value: " + str(killerGrid[targetPosition[0]][(targetPosition[1] - leftCount)]))
+        if killerGrid[targetPosition[0]][(targetPosition[1] - leftCount)] == cageValue:
+            matchedPosition = [targetPosition[0], targetPosition[1] - leftCount]
+            duplicateFound = 0
+            for a in positionsToIgnore:
+                if a == matchedPosition:
+                    duplicateFound = 1
+            if duplicateFound == 0:
+                print("-- New match found! " + str(matchedPosition))
+                killerCage.append(matchedPosition)
+                positionsToIgnore.append(matchedPosition)
+            leftCount = leftCount + 1
+            if(matchedPosition[1] > 0):
+                newTargetPosition = [matchedPosition[0], (matchedPosition[1] - 1)]
+                #print("-> Going recursive from LEFT search with new target position: " + str(newTargetPosition) + ", previous positions: " + str(positionsToIgnore))
+                goDeeperIntoSameDirection = findKillerCageFriends(board,
+                                                                    killerGrid,
+                                                                    cageValue,
+                                                                    newTargetPosition,
+                                                                    positionsToIgnore,
+                                                                    "left")
 
-                        # Opslaan van resultaten van recursie bij terugkeer
-                        for a in killerCageBuffer:
-                            killerCage.append(a)
+                #print("<- Return one level: " + str(newTargetPosition) + ", matches to append from LEFT search: " + str(goDeeperIntoSameDirection))
+                for a in goDeeperIntoSameDirection:
+                    killerCage.append(a)
+            else:
+                #print("-- Skipping LEFT search because there is no space on the left side of matched position " + str(matchedPosition))
+                leftSearch = 0
+        else:
+            # Stop searching in left direction
+            #print("-- Skipping LEFT search because there is no cage value match")
+            leftSearch = 0
+
+    # right Search
+    while (rightSearch == 1 and origin != "left"):
+        #time.sleep(1)
+        #print("RIGHT search called, from origin: " + origin + ", cage value to find: " + str(cageValue) + ", origin position: " + str(targetPosition))
+        #print("-- Target position: " + str(targetPosition[0]) + ", " + str((targetPosition[1] + rightCount)) + ", found cage value: " + str(killerGrid[targetPosition[0]][(targetPosition[1] + rightCount)]))
+        if killerGrid[targetPosition[0]][(targetPosition[1] + rightCount)] == cageValue:
+            matchedPosition = [targetPosition[0], targetPosition[1] + rightCount]
+            duplicateFound = 0
+            for a in positionsToIgnore:
+                if a == matchedPosition:
+                    duplicateFound = 1
+            if duplicateFound == 0:
+                print("-- New match found! " + str(matchedPosition))
+                killerCage.append(matchedPosition)
+                positionsToIgnore.append(matchedPosition)
+            rightCount = rightCount + 1
+            if (matchedPosition[1] < 8):
+                newTargetPosition = [matchedPosition[0], (matchedPosition[1] + 1)]
+                #print("-> Going recursive from RIGHT search with new target position: " + str(newTargetPosition) + ", previous positions: " + str(positionsToIgnore))
+                goDeeperIntoSameDirection = findKillerCageFriends(board,
+                                                                    killerGrid,
+                                                                    cageValue,
+                                                                    newTargetPosition,
+                                                                    positionsToIgnore,
+                                                                    "right")
+                #print("<- Return one level: " + str(newTargetPosition) + ", matches to append from RIGHT search: " + str(goDeeperIntoSameDirection))
+                for a in goDeeperIntoSameDirection:
+                    killerCage.append(a)
+            else:
+                #print("-- Skipping RIGHT search because there is no space on the right side of matched position " + str(matchedPosition))
+                rightSearch = 0
+        else:
+            # Stop searching in right direction
+            #print("-- Skipping RIGHT search because there is no cage value match")
+            rightSearch = 0
+
+    # up Search
+    while (upSearch == 1 and origin != "down"):
+        #time.sleep(1)
+        #print("UP search called, from origin: " + origin + ", cage value to find: " + str(cageValue) + ", origin position: " + str(targetPosition))
+        #print("-- Target position: " + str((targetPosition[0] - upCount)) + ", " + str(targetPosition[1]) + ", found cage value: " + str(killerGrid[(targetPosition[0] - upCount)][targetPosition[1]]))
+        if killerGrid[(targetPosition[0] - upCount)][targetPosition[1]] == cageValue:
+            matchedPosition = [targetPosition[0] - upCount, targetPosition[1]]
+            duplicateFound = 0
+            for a in positionsToIgnore:
+                if a == matchedPosition:
+                    duplicateFound = 1
+            if duplicateFound == 0:
+                print("-- New match found! " + str(matchedPosition))
+                killerCage.append(matchedPosition)
+                positionsToIgnore.append(matchedPosition)
+            upCount = upCount + 1
+            if (matchedPosition[0] > 0):
+                newTargetPosition = [matchedPosition[0] - 1, (matchedPosition[1])]
+                #print("-> Going recursive from DOWN search with new target position: " + str(newTargetPosition) + ", previous positions: " + str(positionsToIgnore))
+                goDeeperIntoSameDirection = findKillerCageFriends(board,
+                                                                      killerGrid,
+                                                                      cageValue,
+                                                                      newTargetPosition,
+                                                                      positionsToIgnore,
+                                                                      "up")
+                #print("<- Return one level: " + str(newTargetPosition) + ", matches to append from UP search: " + str(goDeeperIntoSameDirection))
+                for a in goDeeperIntoSameDirection:
+                    killerCage.append(a)
+            else:
+                #print("-- Skipping UP search because there is no space on the up side of matched position " + str(matchedPosition))
+                upSearch = 0
+        else:
+            # Stop searching in up direction
+            #print("-- Skipping UP search because there is no cage value match")
+            upSearch = 0
+
+    # down Search
+    while (downSearch == 1 and origin != "up"):
+        #time.sleep(1)
+        #print("DOWN search called, from origin: " + origin + ", cage value to find: " + str(cageValue) + ", origin position: " + str(targetPosition))
+        #print("-- Target position: " + str((targetPosition[0] + downCount)) + ", " + str(targetPosition[1]) + ", found cage value: " + str(killerGrid[(targetPosition[0] + downCount)][targetPosition[1]]))
+        if killerGrid[(targetPosition[0] + downCount)][targetPosition[1]] == cageValue:
+            matchedPosition = [targetPosition[0] + downCount, targetPosition[1]]
+            duplicateFound = 0
+            for a in positionsToIgnore:
+                if a == matchedPosition:
+                    duplicateFound = 1
+            if duplicateFound == 0:
+                print("-- New match found! " + str(matchedPosition))
+                killerCage.append(matchedPosition)
+                positionsToIgnore.append(matchedPosition)
+            downCount = downCount + 1
+            if (matchedPosition[0] < 8):
+                newTargetPosition = [matchedPosition[0] + 1, (matchedPosition[1])]
+                #print("-> Going recursive from UP search with new target position: " + str(newTargetPosition) + ", previous positions: " + str(positionsToIgnore))
+                goDeeperIntoSameDirection = findKillerCageFriends(board,
+                                                                    killerGrid,
+                                                                    cageValue,
+                                                                    newTargetPosition,
+                                                                    positionsToIgnore,
+                                                                    "down")
+                #print("<- Return one level: " + str(newTargetPosition) + ", matches to append from DOWN search: " + str(goDeeperIntoSameDirection))
+                for a in goDeeperIntoSameDirection:
+                    killerCage.append(a)
+            else:
+                #print("-- Skipping DOWN search because there is no space on the down side of matched position " + str(matchedPosition))
+                downSearch = 0
+        else:
+            # Stop searching in down direction
+            #print("-- Skipping DOWN search because there is no cage value match")
+            downSearch = 0
+
     return killerCage
 
 def printSolutionGrid(solutionGrid):
