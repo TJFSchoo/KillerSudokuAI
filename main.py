@@ -59,21 +59,21 @@ def solve(solutionGrid, killerGrid):
 # Functie om met Constraint Satisfaction te valideren of zet valide is (Boolean)
 def checkValidity(board, numberFilledIn, position, killerGrid):
     print("Currently filled in board: " + str(solutionGrid))
-    print("Trying to fill in number: " + str(numberFilledIn))
+    #("Trying to fill in number: " + str(numberFilledIn))
     #time.sleep(1)
 
     # Constraint op rij (horizontaal)
     # Voor elke horizontale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
     for i in range(len(board[0])):
         if board[position[0]][i] == numberFilledIn and position[1] != i:
-            print("Horizontal constraint: FALSE")
+            #print("Horizontal constraint: FALSE")
             return False
 
     # Constraint op kolom (verticaal)
     # Voor elke verticale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
     for i in range(len(board)):
         if board[i][position[1]] == numberFilledIn and position[0] != i:
-            print("Vertical constraint: FALSE")
+            #print("Vertical constraint: FALSE")
             return False
 
     # Constraint op vierkant (9x9)
@@ -83,12 +83,12 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     for i in range(box_y * 3, box_y * 3 + 3):
         for j in range(box_x * 3, box_x * 3 + 3):
             if board[i][j] == numberFilledIn and (i, j) != position:
-                print("Square constraint: FALSE")
+                #print("Square constraint: FALSE")
                 return False
 
     # Killer-constraint
-    print("Cage value:")
-    print(killerGrid[position[0]][position[1]])
+    #print("Cage value:")
+    #print(killerGrid[position[0]][position[1]])
     cageValue = killerGrid[position[0]][position[1]]
     killerCage = []
 
@@ -126,8 +126,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 
     killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)], "none")
     # killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)])
-    print("Matching killer cage for value " + str(cageValue) + ", position " + str(position) + ":")
-    print(str(killerCage))
+    #print("Matching killer cage for value " + str(cageValue) + ", position " + str(position) + ":")
+    #print(str(killerCage))
 
     # Als cage nog niet compleet is ingevuld, skip
     emptySpaceInCage = 0
@@ -148,7 +148,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             finalEmptyCageSpace = 1
 
     if finalEmptyCageSpace == 1:
-        print("Final blank space found in cage, killer-constraint activated:")
+        #print("Final blank space found in cage, killer-constraint activated:")
         cageTotalValue = 0
         # Optellen alle waardes en vergelijken met totale waarde die cage moet zijn bij oplossing
         for i in killerCage:
@@ -156,20 +156,20 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             horizontalCoords = i[1]
             cageTotalValue = cageTotalValue + board[verticalCoords][horizontalCoords]
         cageTotalValue = cageTotalValue + numberFilledIn
-        print("Assigned cage value: " + str(cageValue))
-        print("Total filled-in cage value: " + str(cageTotalValue))
+        #print("Assigned cage value: " + str(cageValue))
+        #print("Total filled-in cage value: " + str(cageTotalValue))
         # Als alle cage waardes zijn ingevuld en de totale cage waarde wijkt af: False
         if cageValue != cageTotalValue:
-            print("Killer constraint: FALSE")
+            #print("Killer constraint: FALSE")
             return False
         else:
-            print("Cage value correct!")
+            #print("Cage value correct!")
             return True
 
     else:
-        print("Skipping killer-constraint for now due to blank spaces.")
+        #print("Skipping killer-constraint for now due to blank spaces.")
 
-    return True
+     return True
 
 # def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore):
 #     killerCage = []
@@ -216,7 +216,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 if a == matchedPosition:
                     duplicateFound = 1
             if duplicateFound == 0:
-                print("-- New match found! " + str(matchedPosition))
+                #print("-- New match found! " + str(matchedPosition))
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             leftCount = leftCount + 1
@@ -253,7 +253,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 if a == matchedPosition:
                     duplicateFound = 1
             if duplicateFound == 0:
-                print("-- New match found! " + str(matchedPosition))
+                #print("-- New match found! " + str(matchedPosition))
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             rightCount = rightCount + 1
@@ -289,7 +289,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 if a == matchedPosition:
                     duplicateFound = 1
             if duplicateFound == 0:
-                print("-- New match found! " + str(matchedPosition))
+                #print("-- New match found! " + str(matchedPosition))
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             upCount = upCount + 1
@@ -325,7 +325,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 if a == matchedPosition:
                     duplicateFound = 1
             if duplicateFound == 0:
-                print("-- New match found! " + str(matchedPosition))
+                #print("-- New match found! " + str(matchedPosition))
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             downCount = downCount + 1
