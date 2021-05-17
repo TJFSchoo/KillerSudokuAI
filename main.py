@@ -12,16 +12,28 @@ solutionGrid = [
     [0,  0,  0,  0,  0,  0,  0,  0,  0]
 ]
 
+# killerSudokuGrid = [
+#     [3,  3,  15, 15, 15, 22, 4,  16, 15],
+#     [25, 25, 17, 17, 22, 22, 4,  16, 15],
+#     [25, 25, 9,  9,  22, 8,  20, 20, 15],
+#     [6,  14, 14, 9,  17, 8,  20, 17, 15],
+#     [6,  13, 13, 20, 17, 8,  17, 17, 12],
+#     [27, 13, 6,  20, 17, 20, 6,  6,  12],
+#     [27, 6,  6,  20, 10, 20, 20, 14, 14],
+#     [27, 8,  16, 10, 10, 15, 15, 14, 14],
+#     [27, 8,  16, 10, 13, 13, 13, 17, 17]
+# ]
+
 killerSudokuGrid = [
-    [3,  3,  15, 15, 15, 22, 4,  16, 15],
-    [25, 25, 17, 17, 22, 22, 4,  16, 15],
-    [25, 25, 9,  9,  22, 8,  20, 20, 15],
-    [6,  14, 14, 9,  17, 8,  20, 17, 15],
-    [6,  13, 13, 20, 17, 8,  17, 17, 12],
-    [27, 13, 6,  20, 17, 20, 6,  6,  12],
-    [27, 6,  6,  20, 10, 20, 20, 14, 14],
-    [27, 8,  16, 10, 10, 15, 15, 14, 14],
-    [27, 8,  16, 10, 13, 13, 13, 17, 17]
+    [9, 15, 15, 18, 14, 8, 8, 27, 10],
+    [9, 23, 15, 18, 14, 14, 27, 27, 10],
+    [23, 23, 15, 18, 18, 15, 27, 23, 10],
+    [14, 23, 17, 17, 17, 15, 15, 23, 23],
+    [14, 21, 20, 20, 17, 15, 9, 14, 14],
+    [21, 21, 20, 19, 19, 20, 9, 14, 25],
+    [21, 13, 10, 10, 19, 20, 19, 14, 25],
+    [13, 13, 13, 10, 20, 20, 19, 19, 25],
+    [22, 22, 22, 17, 17, 17, 3, 3, 25]
 ]
 
 # AI
@@ -48,7 +60,7 @@ def solve(solutionGrid, killerGrid):
 def checkValidity(board, numberFilledIn, position, killerGrid):
     print("Currently filled in board: " + str(solutionGrid))
     print("Trying to fill in number: " + str(numberFilledIn))
-    time.sleep(1)
+    #time.sleep(1)
 
     # Constraint op rij (horizontaal)
     # Voor elke horizontale waarde wordt gekeken of het getal niet hetzefde is als het ingevulde nummer, met uitzondering van de plek die net is ingevuld
