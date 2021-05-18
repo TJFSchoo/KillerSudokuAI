@@ -15,6 +15,7 @@ solutionGrid = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
+
 # Killer cage grid
 # Source: https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
 killerSudokuGrid = [
@@ -29,28 +30,22 @@ killerSudokuGrid = [
     [22, 22, 22, 17, 17, 17, 3, 3, 25]
 ]
 
-
 # Function to solve solution based on provided killer grid
 def solve(grid, killerGrid):
     foundEmptySquare = findEmpty(grid)
     if not foundEmptySquare:
-        # No blank spaces = solved killer sudoku
+        # No blank spaces means the Sudoku is solved
         print("Finished. Total runtime: " + str(round(time.time() - startTime)) + " seconds")
         return True
     else:
         row, col = foundEmptySquare
-
     for i in range(1, 10):
         if checkValidity(grid, i, (row, col), killerGrid):
             grid[row][col] = i
-
             if solve(grid, killerGrid):
                 return True
-
             grid[row][col] = 0
-
     return False
-
 
 # Function providing constraint satisfaction
 def checkValidity(board, numberFilledIn, position, killerGrid):
@@ -88,14 +83,11 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
         count = count + 1
         verticalCoords = i[0]
         horizontalCoords = i[1]
-
+        # If all other cage values are filled in, and last value is not yet filled in, proceed with check
         if board[verticalCoords][horizontalCoords] == 0 and count != len(killerCage):
             emptyCageSpaceInTheMiddle = 1
-
-        # If all other cage values are filled in, and last value is not yet filled in, proceed with check
         if board[verticalCoords][horizontalCoords] == 0 and count == len(killerCage) and emptyCageSpaceInTheMiddle == 0:
             finalEmptyCageSpace = 1
-
     if finalEmptyCageSpace == 1:
         cageTotalValue = 0
         for i in killerCage:
@@ -109,7 +101,6 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             return True
     else:
         return True
-
 
 # Function to determine matching killed cage squares
 def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
@@ -234,7 +225,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
             downSearch = 0
     return killerCage
 
-
+# Function to print filled-in Sudoku grid
 def printSolutionGrid(grid):
     for i in range(len(grid)):
         if i % 3 == 0 and i != 0:
@@ -248,7 +239,7 @@ def printSolutionGrid(grid):
             else:
                 print(str(grid[i][j]) + " ", end="")
 
-
+# Function to find empty squares on Sudoku grid
 def findEmpty(grid):
     for i in range(len(grid)):
         for j in range(len(grid[0])):
@@ -256,7 +247,7 @@ def findEmpty(grid):
                 return i, j
     return None
 
-
+# Calling the functions
 print("Start:")
 printSolutionGrid(solutionGrid)
 solve(solutionGrid, killerSudokuGrid)
