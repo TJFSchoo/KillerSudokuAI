@@ -231,6 +231,7 @@ def findEmpty(grid, queue):
             return i[0], i[1]
     return None
 
+# Function to create queue with priority based on smallest killer-cage size
 def findPriorityQueue():
     finalQueue, twoSquares, threeSquares, fourSquares, fiveSquares, sixSquares = [], [], [], [], [], []
 
