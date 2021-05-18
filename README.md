@@ -3,7 +3,7 @@ Artificial Intelligence 3.4 - Informatica B
 Tom Schoonbeek 2032257 & Thomas Buurstede 2122226
 Avans Breda 2020-2021
 
-An Algorithm designed to solve the killer-variant of the Sudoku puzzle by using AI programming techniques.
+An algorithm designed to solve the killer-variant of the Sudoku puzzle by using AI programming techniques.
 How does it work?
 
 1.	The algorithm is fed a solution grid (9x9) containing only zero’s, and a killer grid (9x9) containing combinations of matching numbers called cages. 
@@ -24,7 +24,7 @@ How does it work?
 6.	The continuous output is measured by prints in the console. 
 7.	Once there are no more blank spaces, the solution is printed out in a visual 2D Sudoku grid.
 
-PS: A 2D continuous output is available by commenting in lines 55 and 56. Do not forget to comment out line 52 afterwards.
+DISCLAIMER 1: A 2D continuous output is available by commenting in lines 55 and 56. Do not forget to comment out line 52 afterwards.
 
-DISCLAIMER: Input constraints
+DISCLAIMER 2: Input constraints
 Due to limitations, only Killer Sudoku’s containing NO square cages (2x2 or more) are accepted. Furthermore, cages containing the same cage value CANNOT be neighbours.
