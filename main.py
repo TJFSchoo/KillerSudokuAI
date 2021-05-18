@@ -1,6 +1,11 @@
 import time
 
-# Time snapshot + Sudoku grid to be filled in + killer grid
+# SEARCH PROBLEM: Solve the Killer Sudoku
+# Artificial Intelligence 3.4 - Informatica B
+# Tom Schoonbeek 2032257 & Thomas Buurstede 2122226
+# Avans Breda 2020-2021
+
+# START STATE: Time snapshot, sudoku grid to be filled in and killer grid layout
 # Source: https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
 startTime, solutionGrid, killerSudokuGrid = time.time(), [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -29,7 +34,7 @@ def solve(grid, killerGrid):
     priorityQueue = findPriorityQueue()
     foundEmptySquare = findEmpty(grid, priorityQueue)
     if not foundEmptySquare:
-        # No blank spaces means the Sudoku is solved
+        # GOAL STATE: No blank spaces means the Sudoku is solved
         print("Finished. Total runtime: " + str(round(time.time() - startTime)) + " seconds")
         return True
     else:
@@ -45,6 +50,8 @@ def solve(grid, killerGrid):
 # Function providing constraint satisfaction
 def checkValidity(board, numberFilledIn, position, killerGrid):
     print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: " + str(solutionGrid))
+
+    # Optional 2D Sudoku-grid output, don't forget to disable single line above
     #print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: ")
     #printSolutionGrid(board)
 
@@ -105,7 +112,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
     if cageValue == -1:
         cageValue = killerGrid[targetPosition[0]][targetPosition[1]]
 
-    # Left Search
+    # Left-directional search
     while leftSearch == 1 and origin != "right":
         if killerGrid[targetPosition[0]][(targetPosition[1] - leftCount)] == cageValue:
             matchedPosition, duplicateFound = [targetPosition[0], targetPosition[1] - leftCount], 0
@@ -131,7 +138,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
         else:
             leftSearch = 0
 
-    # Right Search
+    # Right-directional search
     while rightSearch == 1 and origin != "left":
         if killerGrid[targetPosition[0]][(targetPosition[1] + rightCount)] == cageValue:
             matchedPosition, duplicateFound = [targetPosition[0], targetPosition[1] + rightCount], 0
@@ -157,7 +164,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
         else:
             rightSearch = 0
 
-    # Up Search
+    # Up-directional search
     while upSearch == 1 and origin != "down":
         if killerGrid[(targetPosition[0] - upCount)][targetPosition[1]] == cageValue:
             matchedPosition, duplicateFound = [targetPosition[0] - upCount, targetPosition[1]], 0
@@ -183,7 +190,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
         else:
             upSearch = 0
 
-    # Down Search
+    # Down-directional search
     while downSearch == 1 and origin != "up":
         if killerGrid[(targetPosition[0] + downCount)][targetPosition[1]] == cageValue:
             matchedPosition, duplicateFound = [targetPosition[0] + downCount, targetPosition[1]], 0
@@ -231,7 +238,7 @@ def findEmpty(grid, queue):
             return i[0], i[1]
     return None
 
-# Function to create queue with priority based on smallest killer-cage size
+# HEURISTIC: Function to create queue with priority based on smallest killer-cage size
 def findPriorityQueue():
     finalQueue, twoSquares, threeSquares, fourSquares, fiveSquares, sixSquares = [], [], [], [], [], []
 
