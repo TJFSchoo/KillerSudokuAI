@@ -98,14 +98,12 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 
 # Function to determine matching killed cage squares
 def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
-    killerCage = []
-    upSearch, rightSearch, downSearch, leftSearch, upCount, rightCount, downCount, leftCount = 1, 1, 1, 1, 0, 0, 0, 0
+    killerCage, upSearch, rightSearch, downSearch, leftSearch, upCount, rightCount, downCount, leftCount = [], 1, 1, 1, 1, 0, 0, 0, 0
 
     # Left Search
     while leftSearch == 1 and origin != "right":
         if killerGrid[targetPosition[0]][(targetPosition[1] - leftCount)] == cageValue:
-            matchedPosition = [targetPosition[0], targetPosition[1] - leftCount]
-            duplicateFound = 0
+            matchedPosition, duplicateFound = [targetPosition[0], targetPosition[1] - leftCount], 0
             for a in positionsToIgnore:
                 if a == matchedPosition:
                     duplicateFound = 1
@@ -131,8 +129,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
     # Right Search
     while rightSearch == 1 and origin != "left":
         if killerGrid[targetPosition[0]][(targetPosition[1] + rightCount)] == cageValue:
-            matchedPosition = [targetPosition[0], targetPosition[1] + rightCount]
-            duplicateFound = 0
+            matchedPosition, duplicateFound = [targetPosition[0], targetPosition[1] + rightCount], 0
             for a in positionsToIgnore:
                 if a == matchedPosition:
                     duplicateFound = 1
@@ -158,8 +155,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
     # Up Search
     while upSearch == 1 and origin != "down":
         if killerGrid[(targetPosition[0] - upCount)][targetPosition[1]] == cageValue:
-            matchedPosition = [targetPosition[0] - upCount, targetPosition[1]]
-            duplicateFound = 0
+            matchedPosition, duplicateFound = [targetPosition[0] - upCount, targetPosition[1]], 0
             for a in positionsToIgnore:
                 if a == matchedPosition:
                     duplicateFound = 1
@@ -185,8 +181,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
     # Down Search
     while downSearch == 1 and origin != "up":
         if killerGrid[(targetPosition[0] + downCount)][targetPosition[1]] == cageValue:
-            matchedPosition = [targetPosition[0] + downCount, targetPosition[1]]
-            duplicateFound = 0
+            matchedPosition, duplicateFound = [targetPosition[0] + downCount, targetPosition[1]], 0
             for a in positionsToIgnore:
                 if a == matchedPosition:
                     duplicateFound = 1
