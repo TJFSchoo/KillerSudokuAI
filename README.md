@@ -1,7 +1,7 @@
 # KillerSudokuAI
-# Artificial Intelligence 3.4 - Informatica B
-# Tom Schoonbeek 2032257 & Thomas Buurstede 2122226
-# Avans Breda 2020-2021
+Artificial Intelligence 3.4 - Informatica B
+Tom Schoonbeek 2032257 & Thomas Buurstede 2122226
+Avans Breda 2020-2021
 
 Algorithm designed to solve the killer-variant of the Sudoku puzzle by using AI programming techniques.
 How does it work?
