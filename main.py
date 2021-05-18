@@ -85,8 +85,6 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
         horizontalCoords = i[1]
 
         # Check whether number filled in is already present in the killer cage (not allowed)
-        a = numberFilledIn
-        b = board[verticalCoords][horizontalCoords]
         if board[verticalCoords][horizontalCoords] == numberFilledIn:
             return False
 
