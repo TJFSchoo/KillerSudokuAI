@@ -1,10 +1,8 @@
 import time
 
-# Time snapshot
-startTime = time.time()
-
-# Sudoku grid to be filled in
-solutionGrid = [
+# Time snapshot + Sudoku grid to be filled in + killer grid
+# Source: https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
+startTime, solutionGrid, killerSudokuGrid = time.time(), [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -14,11 +12,7 @@ solutionGrid = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0]
-]
-
-# Killer cage grid
-# Source: https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
-killerSudokuGrid = [
+], [
     [9, 15, 15, 18, 14, 8, 8, 27, 10],
     [9, 23, 15, 18, 14, 14, 27, 27, 10],
     [23, 23, 15, 18, 18, 15, 27, 23, 10],
@@ -62,8 +56,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             return False
 
     # Baby-step 3: Square constraint [1-9 may only appear once per 3x3 square]
-    squareX = position[1] // 3
-    squareY = position[0] // 3
+    squareX, squareY = position[1] // 3, position[0] // 3
 
     for i in range(squareY * 3, squareY * 3 + 3):
         for j in range(squareX * 3, squareX * 3 + 3):
@@ -75,14 +68,10 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)], "none")
 
     # If squares related to killer-cage are not completely filled in yet before the last cage-square, skip
-    count = 0
-    emptyCageSpaceInTheMiddle = 0
-    finalEmptyCageSpace = 0
+    count, emptyCageSpaceInTheMiddle, finalEmptyCageSpace = 0, 0, 0
     killerCage.sort()
     for i in killerCage:
-        count = count + 1
-        verticalCoords = i[0]
-        horizontalCoords = i[1]
+        count, verticalCoords, horizontalCoords = count + 1, i[0], i[1]
 
         # Check whether number filled in is already present in the killer cage (not allowed)
         if board[verticalCoords][horizontalCoords] == numberFilledIn:
@@ -97,8 +86,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     if finalEmptyCageSpace == 1:
         cageTotalValue = 0
         for i in killerCage:
-            verticalCoords = i[0]
-            horizontalCoords = i[1]
+            verticalCoords, horizontalCoords = i[0], i[1]
             cageTotalValue = cageTotalValue + board[verticalCoords][horizontalCoords]
         cageTotalValue = cageTotalValue + numberFilledIn
         if cageValue != cageTotalValue:
@@ -111,16 +99,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 # Function to determine matching killed cage squares
 def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
     killerCage = []
-
-    upSearch = 1
-    rightSearch = 1
-    downSearch = 1
-    leftSearch = 1
-
-    leftCount = 0
-    rightCount = 0
-    upCount = 0
-    downCount = 0
+    upSearch, rightSearch, downSearch, leftSearch, upCount, rightCount, downCount, leftCount = 1, 1, 1, 1, 0, 0, 0, 0
 
     # Left Search
     while leftSearch == 1 and origin != "right":
