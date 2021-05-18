@@ -55,17 +55,17 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     #print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: ")
     #printSolutionGrid(board)
 
-    # Baby-step 1: Horizontal constraint [1-9 may only appear once per row]
+    # Baby-step 1: Horizontal constraint [ALLDIFF: 1-9 may only appear once per row]
     for i in range(len(board[0])):
         if board[position[0]][i] == numberFilledIn and position[1] != i:
             return False
 
-    # Baby-step 2: Vertical constraint [1-9 may only appear once per column]
+    # Baby-step 2: Vertical constraint [ALLDIFF: 1-9 may only appear once per column]
     for i in range(len(board)):
         if board[i][position[1]] == numberFilledIn and position[0] != i:
             return False
 
-    # Baby-step 3: Square constraint [1-9 may only appear once per 3x3 square]
+    # Baby-step 3: Square constraint [ALLDIFF: 1-9 may only appear once per 3x3 square]
     squareX, squareY = position[1] // 3, position[0] // 3
 
     for i in range(squareY * 3, squareY * 3 + 3):
@@ -83,7 +83,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
     for i in killerCage:
         count, verticalCoords, horizontalCoords = count + 1, i[0], i[1]
 
-        # Check whether number filled in is already present in the killer cage (not allowed)
+        # [ALLDIFF] Check whether number filled in is already present in the killer cage (not allowed)
         if board[verticalCoords][horizontalCoords] == numberFilledIn:
             return False
 
