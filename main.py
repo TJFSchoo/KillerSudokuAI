@@ -1,67 +1,72 @@
 import time
 
-start_time = time.time()
+# Time snapshot
+startTime = time.time()
 
+# Sudoku grid to be filled in
 solutionGrid = [
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0],
-    [0,  0,  0,  0,  0,  0,  0,  0,  0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
 ]
-# https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
+# Killer cage grid
+# Source: https://www.theguardian.com/lifeandstyle/2020/jan/12/observer-killer-sudoku
 killerSudokuGrid = [
-    [ 9, 15, 15, 18, 14,  8,  8, 27, 10],
-    [ 9, 23, 15, 18, 14, 14, 27, 27, 10],
+    [9, 15, 15, 18, 14, 8, 8, 27, 10],
+    [9, 23, 15, 18, 14, 14, 27, 27, 10],
     [23, 23, 15, 18, 18, 15, 27, 23, 10],
     [14, 23, 17, 17, 17, 15, 15, 23, 23],
-    [14, 21, 20, 20, 17, 15,  9, 14, 14],
-    [21, 21, 20, 19, 19, 20,  9, 14, 25],
+    [14, 21, 20, 20, 17, 15, 9, 14, 14],
+    [21, 21, 20, 19, 19, 20, 9, 14, 25],
     [21, 13, 10, 10, 19, 20, 19, 14, 25],
     [13, 13, 13, 10, 20, 20, 19, 19, 25],
-    [22, 22, 22, 17, 17, 17,  3,  3, 25]
+    [22, 22, 22, 17, 17, 17, 3, 3, 25]
 ]
 
+
 # Function to solve solution based on provided killer grid
-def solve(solutionGrid, killerGrid):
-    foundEmptySquare = findEmpty(solutionGrid)
+def solve(grid, killerGrid):
+    foundEmptySquare = findEmpty(grid)
     if not foundEmptySquare:
         # No blank spaces = solved killer sudoku
-        print("Finished. Total runtime: " + str(round(time.time() - start_time)) + " seconds")
+        print("Finished. Total runtime: " + str(round(time.time() - startTime)) + " seconds")
         return True
     else:
         row, col = foundEmptySquare
 
     for i in range(1, 10):
-        if checkValidity(solutionGrid, i, (row, col), killerGrid):
-            solutionGrid[row][col] = i
+        if checkValidity(grid, i, (row, col), killerGrid):
+            grid[row][col] = i
 
-            if solve(solutionGrid, killerGrid):
+            if solve(grid, killerGrid):
                 return True
 
-            solutionGrid[row][col] = 0
+            grid[row][col] = 0
 
     return False
 
+
 # Function providing constraint satisfaction
 def checkValidity(board, numberFilledIn, position, killerGrid):
-    print("Runtime: " + str(round(time.time() - start_time)) + " seconds, board: " + str(solutionGrid))
+    print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: " + str(solutionGrid))
 
-    ### Baby-step 1: Horizontal constraint [1-9 may only appear once per row]
+    # Baby-step 1: Horizontal constraint [1-9 may only appear once per row]
     for i in range(len(board[0])):
         if board[position[0]][i] == numberFilledIn and position[1] != i:
             return False
 
-    ### Baby-step 2: Vertical constraint [1-9 may only appear once per column]
+    # Baby-step 2: Vertical constraint [1-9 may only appear once per column]
     for i in range(len(board)):
         if board[i][position[1]] == numberFilledIn and position[0] != i:
             return False
 
-    ### Baby-step 3: Square constraint [1-9 may only appear once per 3x3 square]
+    # Baby-step 3: Square constraint [1-9 may only appear once per 3x3 square]
     squareX = position[1] // 3
     squareY = position[0] // 3
 
@@ -70,7 +75,7 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
             if board[i][j] == numberFilledIn and (i, j) != position:
                 return False
 
-    ### Not-so-baby-step 1: Killer constraint [Must obey killerGrid cage-values]
+    # Not-so-baby-step: Killer constraint [Must obey killerGrid cage-values]
     cageValue = killerGrid[position[0]][position[1]]
     killerCage = findKillerCageFriends(board, killerGrid, cageValue, position, [(-1, -1)], "none")
 
@@ -103,7 +108,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
         else:
             return True
     else:
-     return True
+        return True
+
 
 # Function to determine matching killed cage squares
 def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
@@ -120,7 +126,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
     downCount = 0
 
     # Left Search
-    while(leftSearch == 1 and origin != "right"):
+    while leftSearch == 1 and origin != "right":
         if killerGrid[targetPosition[0]][(targetPosition[1] - leftCount)] == cageValue:
             matchedPosition = [targetPosition[0], targetPosition[1] - leftCount]
             duplicateFound = 0
@@ -131,14 +137,14 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             leftCount = leftCount + 1
-            if(matchedPosition[1] > 0):
+            if matchedPosition[1] > 0:
                 newTargetPosition = [matchedPosition[0], (matchedPosition[1] - 1)]
                 goDeeperIntoSameDirection = findKillerCageFriends(board,
-                                                                    killerGrid,
-                                                                    cageValue,
-                                                                    newTargetPosition,
-                                                                    positionsToIgnore,
-                                                                    "left")
+                                                                  killerGrid,
+                                                                  cageValue,
+                                                                  newTargetPosition,
+                                                                  positionsToIgnore,
+                                                                  "left")
                 for a in goDeeperIntoSameDirection:
                     killerCage.append(a)
             else:
@@ -147,7 +153,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
             leftSearch = 0
 
     # Right Search
-    while (rightSearch == 1 and origin != "left"):
+    while rightSearch == 1 and origin != "left":
         if killerGrid[targetPosition[0]][(targetPosition[1] + rightCount)] == cageValue:
             matchedPosition = [targetPosition[0], targetPosition[1] + rightCount]
             duplicateFound = 0
@@ -158,14 +164,14 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             rightCount = rightCount + 1
-            if (matchedPosition[1] < 8):
+            if matchedPosition[1] < 8:
                 newTargetPosition = [matchedPosition[0], (matchedPosition[1] + 1)]
                 goDeeperIntoSameDirection = findKillerCageFriends(board,
-                                                                    killerGrid,
-                                                                    cageValue,
-                                                                    newTargetPosition,
-                                                                    positionsToIgnore,
-                                                                    "right")
+                                                                  killerGrid,
+                                                                  cageValue,
+                                                                  newTargetPosition,
+                                                                  positionsToIgnore,
+                                                                  "right")
                 for a in goDeeperIntoSameDirection:
                     killerCage.append(a)
             else:
@@ -174,7 +180,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
             rightSearch = 0
 
     # Up Search
-    while (upSearch == 1 and origin != "down"):
+    while upSearch == 1 and origin != "down":
         if killerGrid[(targetPosition[0] - upCount)][targetPosition[1]] == cageValue:
             matchedPosition = [targetPosition[0] - upCount, targetPosition[1]]
             duplicateFound = 0
@@ -185,14 +191,14 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             upCount = upCount + 1
-            if (matchedPosition[0] > 0):
+            if matchedPosition[0] > 0:
                 newTargetPosition = [matchedPosition[0] - 1, (matchedPosition[1])]
                 goDeeperIntoSameDirection = findKillerCageFriends(board,
-                                                                      killerGrid,
-                                                                      cageValue,
-                                                                      newTargetPosition,
-                                                                      positionsToIgnore,
-                                                                      "up")
+                                                                  killerGrid,
+                                                                  cageValue,
+                                                                  newTargetPosition,
+                                                                  positionsToIgnore,
+                                                                  "up")
                 for a in goDeeperIntoSameDirection:
                     killerCage.append(a)
             else:
@@ -201,7 +207,7 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
             upSearch = 0
 
     # Down Search
-    while (downSearch == 1 and origin != "up"):
+    while downSearch == 1 and origin != "up":
         if killerGrid[(targetPosition[0] + downCount)][targetPosition[1]] == cageValue:
             matchedPosition = [targetPosition[0] + downCount, targetPosition[1]]
             duplicateFound = 0
@@ -212,14 +218,14 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
                 killerCage.append(matchedPosition)
                 positionsToIgnore.append(matchedPosition)
             downCount = downCount + 1
-            if (matchedPosition[0] < 8):
+            if matchedPosition[0] < 8:
                 newTargetPosition = [matchedPosition[0] + 1, (matchedPosition[1])]
                 goDeeperIntoSameDirection = findKillerCageFriends(board,
-                                                                    killerGrid,
-                                                                    cageValue,
-                                                                    newTargetPosition,
-                                                                    positionsToIgnore,
-                                                                    "down")
+                                                                  killerGrid,
+                                                                  cageValue,
+                                                                  newTargetPosition,
+                                                                  positionsToIgnore,
+                                                                  "down")
                 for a in goDeeperIntoSameDirection:
                     killerCage.append(a)
             else:
@@ -228,25 +234,28 @@ def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, position
             downSearch = 0
     return killerCage
 
-def printSolutionGrid(solutionGrid):
-    for i in range(len(solutionGrid)):
+
+def printSolutionGrid(grid):
+    for i in range(len(grid)):
         if i % 3 == 0 and i != 0:
             print("------ ------- ------")
 
-        for j in range(len(solutionGrid[0])):
+        for j in range(len(grid[0])):
             if j % 3 == 0 and j != 0:
                 print("| ", end="")
             if j == 8:
-                print(solutionGrid[i][j])
+                print(grid[i][j])
             else:
-                print(str(solutionGrid[i][j]) + " ", end="")
+                print(str(grid[i][j]) + " ", end="")
 
-def findEmpty(solutionGrid):
-    for i in range(len(solutionGrid)):
-        for j in range(len(solutionGrid[0])):
-            if solutionGrid[i][j] == 0:
-                return (i, j)
+
+def findEmpty(grid):
+    for i in range(len(grid)):
+        for j in range(len(grid[0])):
+            if grid[i][j] == 0:
+                return i, j
     return None
+
 
 print("Start:")
 printSolutionGrid(solutionGrid)
