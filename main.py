@@ -45,6 +45,8 @@ def solve(grid, killerGrid):
 # Function providing constraint satisfaction
 def checkValidity(board, numberFilledIn, position, killerGrid):
     print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: " + str(solutionGrid))
+    #print("Runtime: " + str(round(time.time() - startTime)) + " seconds, board: ")
+    #printSolutionGrid(board)
 
     # Baby-step 1: Horizontal constraint [1-9 may only appear once per row]
     for i in range(len(board[0])):
