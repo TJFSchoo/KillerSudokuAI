@@ -250,16 +250,12 @@ def findPriorityQueue():
                 for a in cageMatches:
                     fiveSquares.append(a)
 
+    # Removing duplicates
     twoSquares = [t for t in (set(tuple(i) for i in twoSquares))]
-    twoSquares.sort()
     threeSquares = [t for t in (set(tuple(i) for i in threeSquares))]
-    threeSquares.sort()
     fourSquares = [t for t in (set(tuple(i) for i in fourSquares))]
-    fourSquares.sort()
     fiveSquares = [t for t in (set(tuple(i) for i in fiveSquares))]
-    fiveSquares.sort()
     sixSquares = [t for t in (set(tuple(i) for i in sixSquares))]
-    sixSquares.sort()
 
     # Ordering by smallest cage size for minimal combinations
     for a in twoSquares:
