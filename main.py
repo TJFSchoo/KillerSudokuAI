@@ -83,11 +83,19 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
         count = count + 1
         verticalCoords = i[0]
         horizontalCoords = i[1]
+
+        # Check whether number filled in is already present in the killer cage (not allowed)
+        a = numberFilledIn
+        b = board[verticalCoords][horizontalCoords]
+        if board[verticalCoords][horizontalCoords] == numberFilledIn:
+            return False
+
         # If all other cage values are filled in, and last value is not yet filled in, proceed with check
         if board[verticalCoords][horizontalCoords] == 0 and count != len(killerCage):
             emptyCageSpaceInTheMiddle = 1
         if board[verticalCoords][horizontalCoords] == 0 and count == len(killerCage) and emptyCageSpaceInTheMiddle == 0:
             finalEmptyCageSpace = 1
+
     if finalEmptyCageSpace == 1:
         cageTotalValue = 0
         for i in killerCage:
