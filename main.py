@@ -253,6 +253,7 @@ def findEmpty(grid):
                 return i, j
     return None
 
+
 # Calling the functions
 print("Start:")
 printSolutionGrid(solutionGrid)
