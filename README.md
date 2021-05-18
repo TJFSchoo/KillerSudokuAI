@@ -10,17 +10,17 @@ How does it work?
 2.	A heuristic is formed by analysing the complete killer grid and sorting the cages based on quantity of squares, from smallest to largest. This is done because the smallest squares have the least possible combinations. Solving these early on will decrease the amount of possible combinations drastically. Adding this heuristic leads to Informed Search.
 3.	Using the priority-based queue, the next blank square to be filled in will be determined. If no blank squares are present, the Sudoku is complete.
 4.	A number from one to nine is filled in the blank square, after successfully passing the list of constraints:
-  a.	Horizontal constraint: 1-9 may only appear once per row
-  b.	Vertical constraint: 1-9 may only appear once per column
-  c.	Square constraint: 1-9 may only appear once in the nine 3x3 grids on the board
-  d.	Killer constraint: 
-    i.	All values in a cage must add up to the assigned cage value
-    ii.	A number may only appear once per cage
+a.	Horizontal constraint: 1-9 may only appear once per row
+b.	Vertical constraint: 1-9 may only appear once per column
+c.	Square constraint: 1-9 may only appear once in the nine 3x3 grids on the board
+d.	Killer constraint: 
+i.	All values in a cage must add up to the assigned cage value
+ii.	A number may only appear once per cage
 5.	To apply the killer constraint, a method is called utilizing Depth-first Search, optimally determining neighbouring killer cage matches for each blank square selected, without having to loop through unnecessary grid locations:
-  a.	Left-directional Search
-  b.	Right-directional Search
-  c.	Up-directional Search
-  d.	Down-directional Search
+a.	Left-directional Search
+b.	Right-directional Search
+c.	Up-directional Search
+d.	Down-directional Search
 6.	The continuous output is measured by prints in the console. 
 7.	Once there are no more blank spaces, the solution is printed out in a visual 2D Sudoku grid.
 
