@@ -26,7 +26,8 @@ startTime, solutionGrid, killerSudokuGrid = time.time(), [
 
 # Function to solve solution based on provided killer grid
 def solve(grid, killerGrid):
-    foundEmptySquare = findEmpty(grid)
+    priorityQueue = findPriorityQueue()
+    foundEmptySquare = findEmpty(grid, priorityQueue)
     if not foundEmptySquare:
         # No blank spaces means the Sudoku is solved
         print("Finished. Total runtime: " + str(round(time.time() - startTime)) + " seconds")
@@ -99,6 +100,8 @@ def checkValidity(board, numberFilledIn, position, killerGrid):
 # Function to determine matching killed cage squares
 def findKillerCageFriends(board, killerGrid, cageValue, targetPosition, positionsToIgnore, origin):
     killerCage, upSearch, rightSearch, downSearch, leftSearch, upCount, rightCount, downCount, leftCount = [], 1, 1, 1, 1, 0, 0, 0, 0
+    if cageValue == -1:
+        cageValue = killerGrid[targetPosition[0]][targetPosition[1]]
 
     # Left Search
     while leftSearch == 1 and origin != "right":
@@ -220,13 +223,57 @@ def printSolutionGrid(grid):
                 print(str(grid[i][j]) + " ", end="")
 
 # Function to find empty squares on Sudoku grid
-def findEmpty(grid):
-    for i in range(len(grid)):
-        for j in range(len(grid[0])):
-            if grid[i][j] == 0:
-                return i, j
+def findEmpty(grid, queue):
+    for i in queue:
+        if grid[i[0]][i[1]] == 0:
+            return i[0], i[1]
     return None
 
+def findPriorityQueue():
+    finalQueue, twoSquares, threeSquares, fourSquares, fiveSquares, sixSquares = [], [], [], [], [], []
+
+    for i in range(len(killerSudokuGrid)):
+        for j in range(len(killerSudokuGrid[0])):
+            cageMatches = findKillerCageFriends(solutionGrid, killerSudokuGrid, -1, [i, j], [], "")
+            cageMatches.sort()
+
+            if len(cageMatches) == 2:
+                for a in cageMatches:
+                    twoSquares.append(a)
+            elif len(cageMatches) == 3:
+                for a in cageMatches:
+                    threeSquares.append(a)
+            elif len(cageMatches) == 4:
+                for a in cageMatches:
+                    fourSquares.append(a)
+            elif len(cageMatches) == 5:
+                for a in cageMatches:
+                    fiveSquares.append(a)
+
+    twoSquares = [t for t in (set(tuple(i) for i in twoSquares))]
+    twoSquares.sort()
+    threeSquares = [t for t in (set(tuple(i) for i in threeSquares))]
+    threeSquares.sort()
+    fourSquares = [t for t in (set(tuple(i) for i in fourSquares))]
+    fourSquares.sort()
+    fiveSquares = [t for t in (set(tuple(i) for i in fiveSquares))]
+    fiveSquares.sort()
+    sixSquares = [t for t in (set(tuple(i) for i in sixSquares))]
+    sixSquares.sort()
+
+    # Ordering by smallest cage size for minimal combinations
+    for a in twoSquares:
+        finalQueue.append(a)
+    for a in threeSquares:
+        finalQueue.append(a)
+    for a in fourSquares:
+        finalQueue.append(a)
+    for a in fiveSquares:
+        finalQueue.append(a)
+    for a in sixSquares:
+        finalQueue.append(a)
+
+    return finalQueue
 
 # Calling the functions
 print("Start:")
